@@ -110,10 +110,6 @@ def novel(casestream, casecounts, controlcounts, ksize=31, abundscreen=None,
             print(msg, file=logstream)
         if len(record.sequence) < ksize:
             continue
-        if re.search('[^ACGT]', record.sequence):
-            # This check should be temporary; hopefully khmer will handle
-            # this soon.
-            continue
 
         discard_read = False
         record.ikmers = list()

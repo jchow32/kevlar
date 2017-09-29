@@ -12,6 +12,7 @@ import pytest
 import re
 from tempfile import NamedTemporaryFile
 import screed
+import khmer
 import kevlar
 from kevlar.tests import data_file, data_glob
 
@@ -23,6 +24,14 @@ def triomask():
     mask.consume('GATCTTTCGCTCCCTGTCATCAAGGAGTGATACGCGAAGTGCGTCCCCTT')
     mask.consume('GAAGTTTTGACAATTTACGTGAGCCCTACCTAGCGAAACAACAGAGAACC')
     return mask
+
+
+def test_khmer_preproc():
+    counts = khmer.Counttable(21, 1e5, 4)
+    infile = data_file('has-ambig.fa')
+    counts.consume_seqfile(infile)
+    assert counts.get('GATTACAGATTACAGATTACA') == 0
+    assert counts.get('TATTAAACATTTTTCATTTCT') > 0
 
 
 @pytest.mark.parametrize('mask,numbands,band', [
