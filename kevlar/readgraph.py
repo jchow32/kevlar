@@ -126,6 +126,7 @@ class ReadGraph(networkx.Graph):
         `abundfilt` is true, the minimum bundance is also applied to the number
         of sequences (reads or contigs) in the partition.
         """
+        filtered = 0
         for cc in sorted(networkx.connected_components(self), reverse=True,
                          # Sort first by number of reads, then by read names
                          key=lambda c: (len(c), sorted(c))):
@@ -138,6 +139,12 @@ class ReadGraph(networkx.Graph):
                 assert partition.number_of_nodes() > 0
                 if abundfilt:
                     if minabund and partition.number_of_nodes() < minabund:
+                        if minabund > 1:
+                            filtered += 1
+                            ofile = 'TEMPDIR/cc{:d}.augfastq'.format(filtered)
+                            ostream = kevlar.open(ofile, 'w')
+                            for record in partition:
+                                kevlar.write_augmented_fastx(record, ostream)
                         continue  # Skip partitions that are too small
                 yield partition
             else:
