@@ -32,20 +32,17 @@ if noutfiles != nsamples or noutfiles != nfilters:
 
 tablesize = args.memory / 4
 counts = [khmer.Counttable(args.ksize, tablesize, 4) for _ in range(nsamples)]
-bloomfilters = [khmer.Nodetable.load(f) for f in args.filters]
-print('DEBUG loaded')
-samples = zip(args.sample, bloomfilters, counts, args.outfiles)
-for infilelist, bloomfilter, counttable, outfile in samples:
+bfilters = [khmer.Nodetable.load(f) for f in args.filters]
+samples = zip(args.sample, counts, args.outfiles)
+for infilelist, counttable, outfile in samples:
     for infile in infilelist:
         print('DEBUG infile', infile)
         parser = khmer.ReadParser(infile)
         for n, read in enumerate(parser, 1):
             if n % 10000 == 0:
                 print('DEBUG read', read.sequence, n)
-            for k, kmer in enumerate(bloomfilter.get_kmers(read.sequence), 1):
-                #if k % 1000 == 0:
-                #print('DEBUG kmer', n, k, kmer)
-                kmer_samples = sum([1 for ct in counts if ct.get(kmer)])
+            for k, kmer in enumerate(counttable.get_kmers(read.sequence), 1):
+                kmer_samples = sum([1 for bf in bfilters if bf.get(kmer)])
                 if kmer_samples == 1:
                     counttable.add(kmer)
 
