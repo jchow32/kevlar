@@ -144,7 +144,7 @@ class ReadGraph(networkx.Graph):
                             ofile = 'TEMPDIR/cc{:d}.augfastq'.format(filtered)
                             ostream = kevlar.open(ofile, 'w')
                             for record in partition:
-                                kevlar.write_augmented_fastx(record, ostream)
+                                kevlar.print_augmented_fastx(record, ostream)
                         continue  # Skip partitions that are too small
                 yield partition
             else:
