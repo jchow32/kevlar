@@ -35,6 +35,9 @@ def subparser(subparsers):
     default_args.add_argument('-x', '--max-abund', type=int, metavar='X',
                               default=500, help='discard interesting k-mers '
                               'that occur more than X times')
+    default_args.add_argument('--min-overlap', type=int, metavar='R',
+                              default=None, help='do not add an edge between '
+                              'two nodes if their overlap is less than R bp')
 
     jca_args = subparser.add_argument_group(
         'Junction count assembly mode',

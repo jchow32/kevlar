@@ -253,8 +253,8 @@ def prune_graph(graph, quant=0.1):
     return len(edges_to_drop)
 
 
-def assemble_default(readstream, gmlfilename=None, debug=False,
-                     logstream=sys.stderr):
+def assemble_default(readstream, minoverlap=None, gmlfilename=None,
+                     debug=False, logstream=sys.stderr):
     debugout = None
     if debug:
         debugout = logstream
@@ -266,7 +266,7 @@ def assemble_default(readstream, gmlfilename=None, debug=False,
     message += ' and {:d} interesting k-mers'.format(len(graph.ikmers))
     print('[kevlar::assemble::default]', message, file=logstream)
 
-    graph.populate_edges(strict=True)
+    graph.populate_edges(strict=True, minoverlap=minoverlap)
     message = 'populated "shared interesting k-mers" graph'
     message += ' with {:d} edges'.format(graph.number_of_edges())
     # If number of nodes is less than number of reads, it's probably because
@@ -324,8 +324,8 @@ def assemble_default(readstream, gmlfilename=None, debug=False,
 def main_default(args):
     readstream = kevlar.parse_augmented_fastx(kevlar.open(args.augfastq, 'r'))
     outstream = None  # Only create output file if there are contigs
-    contigstream = assemble_default(readstream, args.gml, args.debug,
-                                    args.logfile)
+    contigstream = assemble_default(readstream, args.min_overlap, args.gml,
+                                    args.debug, args.logfile)
     for contig in contigstream:
         if outstream is None:
             outstream = kevlar.open(args.out, 'w')

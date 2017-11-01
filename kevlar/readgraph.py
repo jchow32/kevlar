@@ -102,12 +102,16 @@ class ReadGraph(networkx.Graph):
                           orient=pair.sameorient, tail=tailname,
                           swapped=pair.swapped)
 
-    def populate_edges(self, strict=False):
+    def populate_edges(self, strict=False, minoverlap=None):
         """
         Instantiate edges between nodes that share an interesting k-mer.
 
         Setting `strict=True` will result in edges between reads only when they
         have a perfect match in their overlap.
+
+        By default, a minimum overlap of k (a single k-mer) is sufficient to
+        add an edge between two nodes, but this can be increased using the
+        `minoverlap` parameter (strict mode only).
         """
         for kmer in self.ikmers:
             readset = self.ikmers[kmer]
@@ -119,6 +123,10 @@ class ReadGraph(networkx.Graph):
                     if pair is kevlar.overlap.INCOMPATIBLE_PAIR:
                         # Shared k-mer but bad overlap
                         continue
+                    if minoverlap and pair.overlap < minoverlap:
+                        continue
+                    import sys
+                    print('DEBUG', pair.overlap, file=sys.stderr)
                     self.check_edge(pair, kmer)
                 else:
                     self.add_edge(read1, read2)

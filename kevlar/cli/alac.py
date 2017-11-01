@@ -18,6 +18,11 @@ def subparser(subparsers):
     subparser = subparsers.add_parser('alac', description=desc, add_help=False)
     subparser._positionals.title = 'Required inputs'
 
+    asmbl_args = subparser.add_argument_group('Contig assembly')
+    asmbl_args.add_argument('--min-overlap', type=int, metavar='R',
+                            default=None, help='do not add an edge between '
+                            'two nodes if their overlap is less than R bp')
+
     local_args = subparser.add_argument_group('Target extraction')
     local_args.add_argument('-d', '--delta', type=int, default=25, metavar='D',
                             help='retrieve the genomic interval from the '
