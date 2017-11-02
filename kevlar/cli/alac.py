@@ -19,9 +19,6 @@ def subparser(subparsers):
     subparser._positionals.title = 'Required inputs'
 
     asmbl_args = subparser.add_argument_group('Contig assembly')
-    asmbl_args.add_argument('--min-overlap', type=int, metavar='R',
-                            default=None, help='do not add an edge between '
-                            'two nodes if their overlap is less than R bp')
 
     local_args = subparser.add_argument_group('Target extraction')
     local_args.add_argument('-d', '--delta', type=int, default=25, metavar='D',
@@ -48,6 +45,13 @@ def subparser(subparsers):
                            help='show this help message and exit')
     misc_args.add_argument('-o', '--out', metavar='FILE',
                            help='output file; default is terminal (stdout)')
+    misc_args.add_argument('--greedy', action='store_true', help='Use the '
+                           'greedy assembly algorithm instead of the default '
+                           'fermi-lite algorithm')
+    misc_args.add_argument('--min-overlap', type=int, metavar='R',
+                           default=None, help='in greedy mode, do not add an '
+                           'edge between two nodes if their overlap is less '
+                           'than R bp')
     misc_args.add_argument('-k', '--ksize', type=int, default=31, metavar='K',
                            help='k-mer size; default is 31')
     subparser.add_argument('infile', help='partitioned reads in augmented '
